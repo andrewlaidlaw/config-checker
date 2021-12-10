@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Language" content="EN" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="https://www.ibm.com/favicon.ico" />
+    <title>Upload inventory information</title>
+    <link rel="stylesheet" href="https://w3.ibm.com/w3ds/cdn/latest/w3ds.css" type="text/css">
+  </head>
+  <body class="ds-has-sticky-footer">
+    <div class="ds-grid">
+      <div class="ds-row ds-bg-blue-6 ds-col-12 ds-text-align-left">
+          <div class="ds-col-10 ds-offset-1">
+              <img src="power-logo.png" width=33% class="ds-padding-0" alt="IBM Power">
+          </div>
+      </div>
+      <div class="ds-row">
+        <div class="ds-col-10 ds-offset-1">
+          <div class="ds-row ds-pad-t-3">
+            <h2 class="ds-heading-1 ds-col-10">Upload inventory</h2>
+            <p class="ds-col-10 ds-margin-bottom-2">Upload a config file in txt format to check whether it contains any parts that are currently on limited supply.</p>
+            
+            <% if (locals.message) { %>
+              <% if (locals.error == false) { %>
+              <div class="ds-col-xs-12 ds-alert ds-success">
+              <% } else { %>
+              <div class="ds-col-xs-12 ds-alert ds-error">
+              <% } %>
+                <p><%= message %></p>
+              </div>
+            <% } %>
+
+            <form ref='uploadForm' 
+              id='uploadForm' 
+              action='/upload'
+              method='post' 
+              encType='multipart/form-data'>
+                <div class="ds-row ds-file-upload-container ds-mar-b-2">
+                  <div class="ds-col-xs-12 ds-col-md-4">
+                      <label for="file-upload" class="ds-button ds-secondary">Choose a file
+                          <input type="file" class="ds-file-upload" name="uploadfile" id="file-upload">
+                      </label>
+                    <p class="ds-mar-t-0_5 ds-file-upload-msg">Please upload a config file</p>
+                </div>
+              </div>
+              <input class="ds-button ds-col-md-4" type='submit' value='Upload' />
+            </form>
+          </div>
+          <div class="ds-row ds-pad-t-3">
+            <p><a href="/update">Update the data file of shortages</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="ds-sticky-footer ds-grid ds-bg-neutral-warm-2" style="width: 100%; height: 110px;" >
+      <div class="ds-row">
+        <h5 class="ds-offset-xs-1 ds-col-xs-10 ds-pad-t-2_5 ds-heading-5">
+          <a href="https://github.com/andrewlaidlaw/config-checker" class="ds-text-neutral-6 ds-font-weight-light">GitHub Repository</a> |
+          <a href="https://console-openshift-console.apps.sbank-sb160.systems.ocp" class="ds-text-neutral-6 ds-font-weight-light">OpenShift Cluster</a> |
+          <a href="https://www.ibm.com/uk-en/it-infrastructure/power" class="ds-text-neutral-6 ds-font-weight-light">IBM Power</a>
+        </h5>
+      </div>
+    </footer>
+    <script src="https://w3.ibm.com/w3ds/cdn/latest/w3ds.js"></script>
+  </body>
+</html>

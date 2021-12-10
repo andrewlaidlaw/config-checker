@@ -1,0 +1,18 @@
+{
+  "name": "config-checker",
+  "version": "1.0.0",
+  "description": "Check a config file for supply issues",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "csvtojson": "^2.0.10",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.2.1",
+    "ejs": "^3.1.6"
+  }
+}
