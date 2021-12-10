@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Language" content="EN" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="https://www.ibm.com/favicon.ico" />
+    <title>Upload inventory information</title>
+    <link rel="stylesheet" href="https://w3.ibm.com/w3ds/cdn/latest/w3ds.css" type="text/css">
+  </head>
+  <body class="ds-has-sticky-footer">
+    <div class="ds-grid">
+      <div class="ds-row ds-bg-blue-6 ds-col-12 ds-text-align-left">
+          <div class="ds-col-10 ds-offset-1">
+              <img src="power-logo.png" width=33% class="ds-padding-0" alt="IBM Power">
+          </div>
+      </div>
+      <div class="ds-row">
+        <div class="ds-col-10 ds-offset-1">
+          <div class="ds-row ds-pad-t-3">
+            <h2 class="ds-heading-1 ds-col-12">Problem features</h2>
+            <p class="ds-col-12 ds-mar-b-2">Here is a list of the current features causing problems in configurations, along with action plans to manage orders.</p>
+            
+            <% if (locals.message) { %>
+              <h3 class="ds-heading-2">Problem features</h3>
+                <% message.forEach(function(reason) { %>
+                  <div class="ds-col-12">
+                    <div class="ds-panel ds-mar-b-2">
+                      <div class="ds-panel-container">
+                        <h4 class="ds-heading-3"><span class="ds-icon-medium ds-icon-face-dissatisfied">&nbsp;</span>Features affected: <%= reason.features %></h4>
+                        <p><b>Reason:</b> <%= reason.reason %></p>
+                        <p><b>Action plan:</b> <%- reason.action.replace(/\n/g, '<br/>') %></p>
+                      </div>
+                    </div>
+                  </div>
+                <% }) %>
+                <div class="ds-row ds-pad-t-1">
+                  <a href="/upload" class="ds-button ds-col-4">Check a configuration file</a>
+                  <p><a href="/update">Update the data file of shortages</a></p>
+                </div>
+            <% } else { %>
+              <div class="ds-col-xs-12 ds-alert ds-error">
+                <p>No problem feature data found</p>
+              </div>
+              <div class="ds-row ds-pad-t-3">
+                <a href="/upload" class="ds-button ds-col-4 ds-text-light-color">Check a configuration file</a>
+                <p><a href="/update">Update the data file of shortages</a></p>
+              </div>
+              <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="ds-sticky-footer ds-grid ds-bg-neutral-warm-2" style="width: 100%; height: 110px;" >
+      <div class="ds-row">
+        <h5 class="ds-offset-xs-1 ds-col-xs-10 ds-pad-t-2_5 ds-heading-5">
+          <a href="https://github.com/andrewlaidlaw/config-checker" class="ds-text-neutral-6 ds-font-weight-light">GitHub Repository</a> |
+          <a href="https://console-openshift-console.apps.sbank-sb160.systems.ocp" class="ds-text-neutral-6 ds-font-weight-light">OpenShift Cluster</a> |
+          <a href="https://www.ibm.com/uk-en/it-infrastructure/power" class="ds-text-neutral-6 ds-font-weight-light">IBM Power</a>
+        </h5>
+      </div>
+    </footer>
+    <script src="https://w3.ibm.com/w3ds/cdn/latest/w3ds.js"></script>
+  </body>
+</html>

@@ -187,6 +187,12 @@ app.get("/upload", function(req,res) {
     res.render('uploadfile');
 });
 
+app.get("/listing", function(req,res) {
+    newdata = fs.readFileSync('./' + datafile);
+    data = JSON.parse(newdata);
+    res.render('listing', {message: data.reasons});
+})
+
 app.post("/update", function(req, res) {
     console.log('Upload started');
     if(req.files) {
