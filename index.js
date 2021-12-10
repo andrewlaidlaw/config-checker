@@ -98,6 +98,7 @@ app.post("/upload", function(req, res) {
             var models = data.models;
 
             // These are variables in use in the code below
+            var problemreasons = [];
             var features = [];
             var insystem = false;
             var modeltype = "";
