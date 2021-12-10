@@ -27,6 +27,7 @@
               <% if (message.problemreasons.length == 0) { %>
               <div class="ds-col-xs-12 ds-alert ds-sucess ds-mar-b-2">
                 <p>There don't seem to be any problems with your configuration.</p>
+              </div>
               <% } else { %>
                 <% message.problemreasons.forEach(function(reason) { %>
                   <div class="ds-col-12">
