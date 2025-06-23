@@ -195,7 +195,7 @@ app.post("/update", function(req, res) {
             console.log('No files were uploaded');
             res.render('updatefile', { message:'No file uploaded. Please select a config file and try again.', error: true, data: true});
         } else {
-            req.files.uploadfile.mv("/data/" + datafile, function(err) {
+            req.files.uploadfile.mv("./data/" + datafile, function(err) {
                 if (err) {
                     console.log('Upload error: ' + err);
                     return res.status(500).send(err);
