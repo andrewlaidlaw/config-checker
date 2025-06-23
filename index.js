@@ -8,10 +8,10 @@ const { SSL_OP_EPHEMERAL_RSA } = require('constants');
 // setup local variables
 var datafile = 'data.json';
 // if data file hasn't yet been uploaded, create a blank JSON file
-if (!fs.existsSync('./' + datafile)) {
-    fs.writeFileSync('./' + datafile, JSON.stringify({}))
+if (!fs.existsSync('./data/' + datafile)) {
+    fs.writeFileSync('./data/' + datafile, JSON.stringify({}))
   }
-var data = require('./' + datafile);
+var data = require('./data/' + datafile);
 var shortfeatures = [];
 
 // Set Express.js to listen for all connections
@@ -28,7 +28,7 @@ app.use(express.static('images'));
 
 // Response on / based on whether data file is already present
 app.get('/', (req, res) => {
-    newdata = fs.readFileSync('./' + datafile);
+    newdata = fs.readFileSync('./data/' + datafile);
     data = JSON.parse(newdata);
 
     if (data.models) {
@@ -72,7 +72,7 @@ app.post("/upload", function(req, res) {
             console.log('File uploaded to ' + filename + ' with size ' + req.files.uploadfile.size + ' bytes');
             
             // update the array of short features in case of upload since last launch
-            newdata = fs.readFileSync('./' + datafile);
+            newdata = fs.readFileSync('./data/' + datafile);
             data = JSON.parse(newdata);
             shortfeatures= [];
 
@@ -103,7 +103,7 @@ app.post("/upload", function(req, res) {
                     }
                 }
                 // If line starts with a feature code, add that to our array of features
-                else if (line.substr(0,8).match(/^\s{4}[0-9A-Z]{4}/g) && insystem == true) {
+                else if (insystem == true && line.substr(0,8).match(/^\s{4}[0-9A-Z]{4}/g)) {
                     features.push(line.substr(4,4));
                 }
                 // If line has 8 blank characters, do nothing
@@ -174,7 +174,7 @@ app.get("/upload", function(req,res) {
 
 // Render a page including all short features and reasons
 app.get("/listing", function(req,res) {
-    newdata = fs.readFileSync('./' + datafile);
+    newdata = fs.readFileSync('./data/' + datafile);
     data = JSON.parse(newdata);
     res.render('listing', {message: data.reasons});
 })
@@ -195,7 +195,7 @@ app.post("/update", function(req, res) {
             console.log('No files were uploaded');
             res.render('updatefile', { message:'No file uploaded. Please select a config file and try again.', error: true, data: true});
         } else {
-            req.files.uploadfile.mv(datafile, function(err) {
+            req.files.uploadfile.mv("/data/" + datafile, function(err) {
                 if (err) {
                     console.log('Upload error: ' + err);
                     return res.status(500).send(err);
