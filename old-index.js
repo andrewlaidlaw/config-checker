@@ -6,12 +6,12 @@ const fs = require('fs');
 const { SSL_OP_EPHEMERAL_RSA } = require('constants');
 
 // setup local variables
-var datafile = './data/data.json';
+var datafile = 'data.json';
 // if data file hasn't yet been uploaded, create a blank JSON file
-if (!fs.existsSync( datafile)) {
-    fs.writeFileSync(datafile, JSON.stringify({}))
+if (!fs.existsSync('./data/' + datafile)) {
+    fs.writeFileSync('./data/' + datafile, JSON.stringify({}))
   }
-var data = require(datafile);
+var data = require('./data/' + datafile);
 var shortfeatures = [];
 
 // Set Express.js to listen for all connections
@@ -28,7 +28,7 @@ app.use(express.static('images'));
 
 // Response on / based on whether data file is already present
 app.get('/', (req, res) => {
-    newdata = fs.readFileSync(datafile);
+    newdata = fs.readFileSync('./data/' + datafile);
     data = JSON.parse(newdata);
 
     if (data.models) {
@@ -48,7 +48,6 @@ app.post("/upload", function(req, res) {
     console.log('Upload started');
     var timestamp = + new Date();
     var filename = 'file' + timestamp;
-    var filetype = "";
 
     if(req.files) {
         if(Array.isArray(req.files.uploadfile)) {
@@ -63,9 +62,6 @@ app.post("/upload", function(req, res) {
             console.log('No files were uploaded');
             res.render('uploadfile', { message:'No file uploaded. Please select a config file and try again.', error: true});
         } else {
-            let uploadfilename = req.files.uploadfile.name;
-            let lastdot = uploadfilename.lastIndexOf('.');
-            filetype = uploadfilename.substring(lastdot + 1);
             req.files.uploadfile.mv(filename, function(err) {
                 console.log('Uploading file to ' + filename);
                 if (err) {
@@ -76,7 +72,7 @@ app.post("/upload", function(req, res) {
             console.log('File uploaded to ' + filename + ' with size ' + req.files.uploadfile.size + ' bytes');
             
             // update the array of short features in case of upload since last launch
-            newdata = fs.readFileSync(datafile);
+            newdata = fs.readFileSync('./data/' + datafile);
             data = JSON.parse(newdata);
             shortfeatures= [];
 
@@ -96,59 +92,30 @@ app.post("/upload", function(req, res) {
             var filecontent = req.files.uploadfile.data;
             var content = filecontent.toString('utf-8');
 
-            if (filetype == "txt") {
-                // Split the uploaded file into lines to process
-                content.split(/\r?\n/).forEach(line => {
-                    // If the line starts with a machine type / model designation, start paying attention
-                    if (line.slice(0, 8).match(/^\d{4}-[A-Z0-9]{3}$/g)) {
-                        modeltype = line.slice(0,8);
-                        // Only record features against new models, not existing hardware
-                        if (models.includes(modeltype)) {
-                            insystem = true;
-                        }
+            // Split the uploaded file into lines to process
+            content.split(/\r?\n/).forEach(line => {
+                // If the line starts with a machine type / model designation, start paying attention
+                if (line.substr(0, 8).match(/^\d{4}-[A-Z0-9]{3}$/g)) {
+                    modeltype = line.substr(0,8);
+                    // Only record features against new models, not existing hardware
+                    if (models.includes(modeltype)) {
+                        insystem = true;
                     }
-                    // If line starts with a feature code, add that to our array of features
-                    else if (insystem == true && line.slice(0,8).match(/^\s{4}[0-9A-Z]{4}/g)) {
-                        features.push(line.slice(4,8));
-                    }
-                    // If line has 8 blank characters, do nothing
-                    else if (line.slice(0,8).match(/^\s{8}/g)) {
-                        // do nothing for blank
-                    }
-                    // For any other line, we must be beyond the machine listing so stop recording feature codes
-                    else {
-                        insystem = false;
-                    };
-                });
-
-            } else if (filetype == "cfr") {
-                console.log("checking CFR");
-                // Split the uploaded file into lines to process
-                content.split(/\r?\n/).forEach(line => {
-                    // Hardware entries are a complete line starting with "08"
-                    if (line.slice(0,2) == ("08")) {
-                        // Characters 3 - 10 are the machine type and model
-                        modeltype = (line.slice(2,6) + "-" + line.slice(7,10));
-                        // Only record features against new models, not existing hardware
-                        if (models.includes(modeltype)) {
-                            // Cut out the first 15 characters that do not relate to features
-                            let modeldetails = line.slice(15);
-                            // Each feature is then a 12 character block containing feature code then quantity
-                            let featurelist = modeldetails.match(/.{1,12}/g)
-                            featurelist.forEach(element => {
-                                // We only want feature codes in our array of features
-                                features.push(element.slice(0,4));
-                            });
-                        }
-                    }
-                });
-            } else {
-                // Respond with a warning if unknown file type
-                console.log("Unknown file type " + filetype);
-                res.render('uploadfile', { message:'Please upload a text (.txt) or CFR (.cfr) file type.', error: true});
-                return;
-            }
-
+                }
+                // If line starts with a feature code, add that to our array of features
+                else if (insystem == true && line.substr(0,8).match(/^\s{4}[0-9A-Z]{4}/g)) {
+                    features.push(line.substr(4,4));
+                }
+                // If line has 8 blank characters, do nothing
+                else if (line.substr(0,8).match(/^\s{8}/g)) {
+                    // do nothing for blank
+                }
+                // For any other line, we must be beyond the machine listing so stop recording feature codes
+                else {
+                    insystem = false;
+                };
+            });
+           
             // We now have an array of features to check
             console.log('Features: ' + features);
 
@@ -186,15 +153,12 @@ app.post("/upload", function(req, res) {
             var messagedata = JSON.parse('{"problemfeatures" : ' + JSON.stringify(problemfeatures) + ', "safefeatures" : ' + JSON.stringify(safefeatures) + ', "problemreasons" : ' + JSON.stringify(problemreasons) + '}');
 
             res.render('result', { message: messagedata});
-            // deletefile(filename); // Needs to be made asynchronous with above logic
 
             // Delete the file that we uploaded previously
-            function deletefile(filename) {
-                fs.unlink(filename, (err) => {
-                    if (err) console.log(err);
-                });
-                console.log('file ' + filename + ' deleted');
-            }
+            fs.unlink(filename, (err) => {
+                if (err) console.log(err);
+            });
+            console.log('file ' + filename + ' deleted');
         }
 
     } else {
@@ -210,7 +174,7 @@ app.get("/upload", function(req,res) {
 
 // Render a page including all short features and reasons
 app.get("/listing", function(req,res) {
-    newdata = fs.readFileSync(datafile);
+    newdata = fs.readFileSync('./data/' + datafile);
     data = JSON.parse(newdata);
     res.render('listing', {message: data.reasons});
 })
@@ -231,7 +195,7 @@ app.post("/update", function(req, res) {
             console.log('No files were uploaded');
             res.render('updatefile', { message:'No file uploaded. Please select a config file and try again.', error: true, data: true});
         } else {
-            req.files.uploadfile.mv(datafile, function(err) {
+            req.files.uploadfile.mv("./data/" + datafile, function(err) {
                 if (err) {
                     console.log('Upload error: ' + err);
                     return res.status(500).send(err);

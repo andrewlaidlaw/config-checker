@@ -19,8 +19,8 @@
       <div class="ds-row">
         <div class="ds-col-10 ds-offset-1">
           <div class="ds-row ds-pad-t-3">
-            <h2 class="ds-heading-1 ds-col-10">Upload inventory</h2>
-            <p class="ds-col-10 ds-margin-bottom-2">Upload a config file in txt format to check whether it contains any parts that are currently on limited supply.</p>
+            <h2 class="ds-heading-1 ds-col-10">Upload configuration</h2>
+            <p class="ds-col-10 ds-margin-bottom-2">Upload a config file in <em>txt</em> or <em>CFR</em> format to check whether it contains any parts that are currently on limited supply.</p>
             
             <% if (locals.message) { %>
               <% if (locals.error == false) { %>
@@ -42,7 +42,7 @@
                       <label for="file-upload" class="ds-button ds-secondary">Choose a file
                           <input type="file" class="ds-file-upload" name="uploadfile" id="file-upload">
                       </label>
-                    <p class="ds-mar-t-0_5 ds-file-upload-msg">Please upload a config file in txt format</p>
+                    <p class="ds-mar-t-0_5 ds-file-upload-msg">Please upload a config file in txt or cfr format</p>
                 </div>
               </div>
               <input class="ds-button ds-col-md-4" type='submit' value='Upload' />
