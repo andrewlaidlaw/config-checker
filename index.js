@@ -125,8 +125,8 @@ app.post("/upload", function(req, res) {
                 console.log("checking CFR");
                 // Split the uploaded file into lines to process
                 content.split(/\r?\n/).forEach(line => {
-                    // Hardware entries are a complete line starting with "08"
-                    if (line.slice(0,2) == ("08")) {
+                    // Hardware entries are a complete line starting with "08" for base or "26" for upgrades
+                    if (line.slice(0,2) == ("08") || line.slice(0,2) == ("26")) {
                         // Characters 3 - 10 are the machine type and model
                         modeltype = (line.slice(2,6) + "-" + line.slice(7,10));
                         // Only record features against new models, not existing hardware
